@@ -41,12 +41,12 @@ to anybody.
 api = WalletPayment(access_token)
 
 # get account info
-acount_info = api.account_info();
+acount_info = api.account_info()
 
 # check status 
 
 # get operation history with last 3 records
-operation_history = api.operation_history({"records": 3});
+operation_history = api.operation_history({"records": 3})
 
 # check status 
 
@@ -74,13 +74,11 @@ result in DB).
 
 ```python
 
-response = ExternalPayment.get_instance_id(client_id);
-if(reponse.status == "success") {
+response = ExternalPayment.get_instance_id(client_id)
+if reponse.status == "success":
     instance_id = response.instance_id;
-}
-else {
+else:
     # throw exception with reponse->error message
-}
 ```
 
 2. Make request payment
@@ -91,24 +89,22 @@ external_payment = ExternalPayment(instance_id);
 
 payment_options = {
     # pattern_id, etc..
-};
-response = external_payment.request(payment_options);
-if(response.status == "success") {
-    request_id = response.request_id;
 }
-else {
+response = external_payment.request(payment_options)
+if response.status == "success":
+    request_id = response.request_id
+else: 
     # throw exception with response->message
-}
 ```
 
 3. Process the request with process-payment. 
 
 ```python
-process_options = array(
+process_options = {
     "request_id": request_id
     # other params..
-);
-result = external_payment->process(process_options);
+}
+result = external_payment.process(process_options)
 # process result according to docs
 ```
 
