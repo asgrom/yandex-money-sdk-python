@@ -85,7 +85,7 @@ else {
 
 2. Make request payment
 
-```php
+```python
 # make instance
 external_payment = ExternalPayment(instance_id);
 
@@ -103,7 +103,7 @@ else {
 
 3. Process the request with process-payment. 
 
-```php
+```python
 process_options = array(
     "request_id": request_id
     # other params..
