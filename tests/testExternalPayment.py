@@ -8,7 +8,7 @@ from yandex_money import exceptions
 from .base import ResponseMockTestCase
 import responses
 import json
-import urllib.parse
+from future.moves.urllib.parse import urlencode
 
 
 class ExernalTestSuite(ResponseMockTestCase):
@@ -24,7 +24,7 @@ class ExernalTestSuite(ResponseMockTestCase):
         self.assertEqual(response['status'], "success")
         self.assertEqual(
             responses.calls[0].request.body,
-            urllib.parse.urlencode({"client_id": "client_id"})
+            urlencode({"client_id": "client_id"})
         )
     def testRequestExternalPayment(self):
         self.addResponse("request-external-payment",
@@ -37,7 +37,7 @@ class ExernalTestSuite(ResponseMockTestCase):
         self.assertEqual(response['status'], "success")
         self.assertEqual(
             responses.calls[0].request.body,
-            urllib.parse.urlencode(options)
+            urlencode(options)
         )
     
 
@@ -52,7 +52,7 @@ class ExernalTestSuite(ResponseMockTestCase):
         self.assertEqual(response['status'], "success")
         self.assertEqual(
             responses.calls[0].request.body,
-            urllib.parse.urlencode(options)
+            urlencode(options)
         )
 
 

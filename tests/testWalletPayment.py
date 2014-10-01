@@ -8,7 +8,7 @@ from yandex_money import exceptions
 from .base import ResponseMockTestCase
 import responses
 import json
-import urllib.parse
+from future.moves.urllib.parse import urlencode
 
 
 class WalletTestSuite(ResponseMockTestCase):
@@ -49,7 +49,7 @@ class WalletTestSuite(ResponseMockTestCase):
         response = self.api.operation_history(options)
         self.assertEqual(response, [])
         self.assertEqual(responses.calls[0].request.body,
-                urllib.parse.urlencode(options)
+                urlencode(options)
         )
 
     def testRequestPayment(self):
@@ -62,7 +62,7 @@ class WalletTestSuite(ResponseMockTestCase):
         response = self.api.request(options)
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(responses.calls[0].request.body,
-                urllib.parse.urlencode(options)
+                urlencode(options)
         )
 
     def testResponsePayment(self):
@@ -75,7 +75,7 @@ class WalletTestSuite(ResponseMockTestCase):
         response = self.api.process(options)
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(responses.calls[0].request.body,
-                urllib.parse.urlencode(options)
+                urlencode(options)
         )
 
     def testIncomingTransferAccept(self):
@@ -94,7 +94,7 @@ class WalletTestSuite(ResponseMockTestCase):
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(
             responses.calls[0].request.body,
-            urllib.parse.urlencode({
+            urlencode({
                 "operation_id": operation_id,
                 "protection_code": protection_code 
             })
@@ -109,7 +109,7 @@ class WalletTestSuite(ResponseMockTestCase):
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(
             responses.calls[0].request.body,
-            urllib.parse.urlencode({
+            urlencode({
                 "operation_id": operation_id,
             })
         )
@@ -143,7 +143,7 @@ class WalletTestSuite(ResponseMockTestCase):
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(
             responses.calls[0].request.body,
-            urllib.parse.urlencode(options)
+            urlencode(options)
         )
 
     def testRevokeToken(self):

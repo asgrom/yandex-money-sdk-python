@@ -2,7 +2,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
 
-import urllib
+from future.moves.urllib.parse import urlparse, urlencode
 import requests
 
 from . import exceptions
@@ -77,7 +77,7 @@ class WalletPayment(BasePayment):
     @classmethod
     def build_obtain_token_url(self, client_id, redirect_uri, scope):
         return "{}/oauth/authorize?{}".format(self.SP_MONEY_URL,
-                urllib.parse.urlencode({
+                urlencode({
                     "client_id": client_id,
                     "redirect_uri": redirect_uri,
                     "scope": " ".join(scope)
