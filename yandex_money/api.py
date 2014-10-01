@@ -12,10 +12,14 @@ class BasePayment(object):
     SP_MONEY_URL = "https://sp-money.yandex.ru"
 
     @classmethod
-    def send_request(cls, url, headers, body):
-        full_url = self.MONEY_URL + url
+    def send_request(cls, url, headers=None, body=None):
+        if not headers:
+            headers = {}
+        if not body:
+            body = {}
+        full_url = cls.MONEY_URL + url
         return cls.process_result(
-            requests.post(full_url, headers, body)
+            requests.post(full_url, headers=headers, data=body)
         )
 
     @classmethod
@@ -32,17 +36,17 @@ class WalletPayment(BasePayment):
     def __init__(self, access_token):
         self.access_token = access_token
 
-    def _send_authenticated_request(self, url, options):
-        return self.send_request(url, options, {
+    def _send_authenticated_request(self, url, options=None):
+        return self.send_request(url, {
             "Authorization": "Bearer {}".format(self.access_token) 
-            })
+            }, options)
 
     def account_info(self):
         return self._send_authenticated_request("/api/account-info")
 
     def get_aux_token(self, scope):
-        return self._send_authenticated_request("/api/account-info", {
-            "scope": scope.split(' ')
+        return self._send_authenticated_request("/api/token-aux", {
+            "scope": ' '.join(scope)
         })
 
     def operation_history(self, options):
@@ -73,15 +77,16 @@ class WalletPayment(BasePayment):
     @classmethod
     def build_obtain_token_url(self, client_id, redirect_uri, scope):
         return "{}/oauth/authorize?{}".format(self.SP_MONEY_URL,
-                urllib.urlencode({
+                urllib.parse.urlencode({
                     "client_id": client_id,
                     "redirect_uri": redirect_uri,
                     "scope": " ".join(scope)
     }))
 
     @classmethod
-    def get_access_token(self, client_id, code, redirect_uri, client_secret=None):
-        full_url = self.SP_MONE_URL + "/oauth/token"
+    def get_access_token(self, client_id, code, redirect_uri,
+            client_secret=None):
+        full_url = self.SP_MONEY_URL + "/oauth/token"
         return self.process_result(requests.post(full_url, data={
             "code": code,
             "client_id": client_id,
@@ -95,25 +100,25 @@ class WalletPayment(BasePayment):
     def revoke_token(self, token, revoke_all=False):
         return self.send_request("/api/revoke", body={
             "revoke-all": revoke_all
-        }, headers={"Authentication": "Bearer {}".format(token)})
+        }, headers={"Authorization": "Bearer {}".format(token)})
 
 
 class ExternalPayment(BasePayment):
-    def __init_(self, instance_id):
+    def __init__(self, instance_id):
         self.instance_id = instance_id
 
     @classmethod
     def get_instance_id(cls, client_id):
-        return self.send_request("/api/instance-id", {
+        return cls.send_request("/api/instance-id", body={
             "client_id": client_id
         })
 
-    def request(options):
+    def request(self, options):
         options['instance_id'] = self.instance_id
-        return self.send_request("/api/request-external-payment", options)
+        return self.send_request("/api/request-external-payment", body=options)
 
-    def process(options):
+    def process(self, options):
         options['instance_id'] = self.instance_id
-        return self.send_request("/api/process-external-payment", options)
+        return self.send_request("/api/process-external-payment", body=options)
 
 
