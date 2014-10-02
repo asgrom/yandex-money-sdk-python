@@ -3,7 +3,7 @@ from __future__ import (absolute_import, division,
 from future.builtins import *
 
 import unittest
-from yandex_money.api import WalletPayment
+from yandex_money.api import Wallet
 from yandex_money import exceptions
 from .base import ResponseMockTestCase
 import responses
@@ -14,7 +14,7 @@ from future.moves.urllib.parse import urlencode
 class WalletTestSuite(ResponseMockTestCase):
     def setUp(self):
         super(WalletTestSuite, self).setUp()
-        self.api = WalletPayment("TEST TOKEN")
+        self.api = Wallet("TEST TOKEN")
 
     def assert_auth_header_present(self):
         self.assertEqual("Bearer TEST TOKEN",
@@ -59,7 +59,7 @@ class WalletTestSuite(ResponseMockTestCase):
             "foo2": "bar2",
         }
 
-        response = self.api.request(options)
+        response = self.api.request_payment(options)
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(responses.calls[0].request.body,
                 urlencode(options)
@@ -72,7 +72,7 @@ class WalletTestSuite(ResponseMockTestCase):
             "foo2": "bar2",
         }
 
-        response = self.api.process(options)
+        response = self.api.process_payment(options)
         self.assertEqual(response, {"status": "success"})
         self.assertEqual(responses.calls[0].request.body,
                 urlencode(options)
@@ -115,7 +115,7 @@ class WalletTestSuite(ResponseMockTestCase):
         )
     def testObtainTokenUrl(self):
         client_id = "client-id"
-        url = WalletPayment.build_obtain_token_url(
+        url = Wallet.build_obtain_token_url(
             "client-id",
             "http://localhost/redirect",
             ["account-info", "operation_history"]
@@ -123,7 +123,7 @@ class WalletTestSuite(ResponseMockTestCase):
         # TODO: check url
 
     def testGetAccessToken(self):
-        self.addResponse(WalletPayment.SP_MONEY_URL + "/oauth/token",
+        self.addResponse(Wallet.SP_MONEY_URL + "/oauth/token",
                          {"status": "success"},
                          is_api_url=False
                          )
@@ -134,7 +134,7 @@ class WalletTestSuite(ResponseMockTestCase):
             "redirect_uri": "redirect_uri",
             "client_secret": "client_secret" 
             }
-        response = WalletPayment.get_access_token(
+        response = Wallet.get_access_token(
             code=options["code"],
             client_id=options["client_id"],
             redirect_uri=options["redirect_uri"],
@@ -148,7 +148,7 @@ class WalletTestSuite(ResponseMockTestCase):
 
     def testRevokeToken(self):
         self.addResponse("revoke", {"status": "success"})
-        WalletPayment.revoke_token("TEST TOKEN")
+        Wallet.revoke_token("TEST TOKEN")
         self.assert_auth_header_present()
 
 

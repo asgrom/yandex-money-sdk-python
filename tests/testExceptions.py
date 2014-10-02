@@ -3,12 +3,12 @@ from __future__ import (absolute_import, division,
 from future.builtins import *
 import unittest
 from yandex_money import exceptions
-from yandex_money.api import WalletPayment
+from yandex_money.api import Wallet
 import responses
 
 class ExceptionsTestSuite(unittest.TestCase):
     def setUp(self):
-        self.api = WalletPayment("TEST TOKEN")
+        self.api = Wallet("TEST TOKEN")
 
     @responses.activate
     def testFormatError(self):

@@ -32,7 +32,7 @@ class BasePayment(object):
             raise exceptions.TokenError
         return result.json()
 
-class WalletPayment(BasePayment):
+class Wallet(BasePayment):
     def __init__(self, access_token):
         self.access_token = access_token
 
@@ -53,11 +53,11 @@ class WalletPayment(BasePayment):
         return self._send_authenticated_request("/api/operation-history",
             options)
 
-    def request(self, options):
+    def request_payment(self, options):
         return self._send_authenticated_request("/api/request-payment",
             options)
 
-    def process(self, options):
+    def process_payment(self, options):
         return self._send_authenticated_request("/api/process-payment",
             options)
 
