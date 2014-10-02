@@ -71,9 +71,7 @@ get operation history with last 3 records
 .. code:: python
 
     operation_history = api.operation_history({"records": 3})
-
-check status
-============
+    # check status
 
 make request payment
 ====================
@@ -83,9 +81,7 @@ make request payment
     request_payment = api.request({ "pattern_id": "p2p", "to":
     money_wallet, "amount_due": amount_due, "comment": comment,
     "message": message, "label": label, })
-
-check status
-============
+    # check status
 
 call process payment to finish payment
 ======================================

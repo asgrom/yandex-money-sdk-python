@@ -1,6 +1,16 @@
 from setuptools import setup
 from os import path
+from codecs import open
+import sys
+import os
 here = path.abspath(path.dirname(__file__))
+
+with open("README.rst", "r", "utf-8") as f:
+    readme = f.read()
+
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    sys.exit()
 
 setup(
     name='yandex-money-sdk-python',
@@ -8,6 +18,7 @@ setup(
     description='SDK yandex money API',
     license='MIT',
     author="NBCO Yandex.Money LLC",
+    long_description=readme,
     maintainer="Anton Ermak",
     maintainer_email='ermak@yamoney.ru',
     packages = ['yandex_money'],
