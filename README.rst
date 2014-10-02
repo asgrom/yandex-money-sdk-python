@@ -10,8 +10,8 @@ Requirements
 Links
 -----
 
-1. Yandex.Money API page: `Ru <http://api.yandex.ru/money/>`__,
-   `En <http://api.yandex.com/money/>`__
+1. Yandex.Money API page: `Ru <http://api.yandex.ru/money/>`_,
+   `En <http://api.yandex.com/money/>`_
 
 Getting started
 ---------------
@@ -32,9 +32,10 @@ Payments from the Yandex.Money wallet
    `register <https://sp-money.yandex.ru/myservices/new.xml>`__ your app
    in Yandex.Money API.
 
-.. code:: python
+    .. code:: python
 
-    auth_url = WalletPayment.buildObtainTokenUrl(client_id, redirect_uri, scope, client_secret)
+        auth_url = WalletPayment.buildObtainTokenUrl(client_id,
+            redirect_uri, scope, client_secret)
 
 2. After that, user fills Yandex.Money form and Yandex.Money service
    redirects browser to ``redirect_uri`` on your server with ``code``
@@ -51,22 +52,25 @@ Payments from the Yandex.Money wallet
    Feel free to save ``access_token`` in your database. But don't show
    ``access_token`` to anybody.
 
-4. Now you can use Yandex.Money API \`\`\`python
+4. Now you can use Yandex.Money API
 
-api = WalletPayment(access\_token)
+.. code:: python
+
+    api = WalletPayment(access_token)
 
 get account info
 ================
 
-acount\_info = api.account\_info()
+.. code:: python
 
-check status
-============
+    acount_info = api.account_info()
 
 get operation history with last 3 records
 =========================================
 
-operation\_history = api.operation\_history({"records": 3})
+.. code:: python
+
+    operation_history = api.operation_history({"records": 3})
 
 check status
 ============
@@ -74,9 +78,11 @@ check status
 make request payment
 ====================
 
-request\_payment = api.request({ "pattern\_id": "p2p", "to":
-money\_wallet, "amount\_due": amount\_due, "comment": comment,
-"message": message, "label": label, })
+.. code:: python
+
+    request_payment = api.request({ "pattern_id": "p2p", "to":
+    money_wallet, "amount_due": amount_due, "comment": comment,
+    "message": message, "label": label, })
 
 check status
 ============
@@ -84,15 +90,16 @@ check status
 call process payment to finish payment
 ======================================
 
-process\_payment = api.process({ "request\_id":
-request\_payment.request\_id, }) \`\`\` ### Payments from bank cards
-without authorization
+.. code:: python
+
+    process_payment = api.process({ "request_id":
+    request_payment.request_id, }) # Payments from bank cards
+    without authorization
 
 1. Fetch instantce-id(ussually only once for every client. You can store
    result in DB).
 
 .. code:: python
-
 
     response = ExternalPayment.get_instance_id(client_id)
     if reponse.status == "success":
