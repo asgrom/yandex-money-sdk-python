@@ -1,5 +1,8 @@
-.. figure:: https://travis-ci.org/raymank26/yandex-money-sdk-python.svg?branch=master
-   :alt: 
+.. image:: https://travis-ci.org/raymank26/yandex-money-sdk-python.svg?branch=master
+    :target: https://travis-ci.org/raymank26/yandex-money-sdk-python
+
+.. image:: https://coveralls.io/repos/raymank26/yandex-money-sdk-python/badge.png?branch=master
+  :target: https://coveralls.io/r/raymank26/yandex-money-sdk-python?branch=master
 
 Requirements
 ------------
