@@ -13,7 +13,7 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 setup(
-    name='yandex-money-sdk-python',
+    name='yandex-money-sdk',
     version='0.1.0',
     description='SDK yandex money API',
     license='MIT',
