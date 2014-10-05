@@ -1,3 +1,5 @@
+|Build Status| |Coverage Status|
+
 Python Yandex.Money API SDK
 ===========================
 
@@ -127,3 +129,7 @@ Running tests
 2. Install ``tox``
 3. Run ``tox`` in repo root directory
 
+.. |Build Status| image:: https://travis-ci.org/yandex-money/yandex-money-sdk-python.svg?branch=master
+   :target: https://travis-ci.org/yandex-money/yandex-money-sdk-python
+.. |Coverage Status| image:: https://coveralls.io/repos/yandex-money/yandex-money-sdk-python/badge.png?branch=master
+   :target: https://coveralls.io/r/yandex-money/yandex-money-sdk-python?branch=master
