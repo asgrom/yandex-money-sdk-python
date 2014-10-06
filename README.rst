@@ -126,8 +126,10 @@ Running tests
 -------------
 
 1. Clone this repo.
-2. Install ``tox``
-3. Run ``tox`` in repo root directory
+2. Create ``tests/constants.python`` file with ``ACCESS_TOKEN`` and
+   ``CLIENT_ID`` constants.
+3. Install ``tox``
+4. Run ``tox`` in repo root directory
 
 .. |Build Status| image:: https://travis-ci.org/yandex-money/yandex-money-sdk-python.svg?branch=master
    :target: https://travis-ci.org/yandex-money/yandex-money-sdk-python

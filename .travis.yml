@@ -1,5 +1,7 @@
 language: python
 python: 2.7
+before_install:
+  - openssl aes-256-cbc -K $encrypted_52b938b0079c_key -iv $encrypted_52b938b0079c_iv -in constants.py.enc.yamoney -out tests/constants.py -d
 install:
   - pip install tox
   - pip install coveralls
