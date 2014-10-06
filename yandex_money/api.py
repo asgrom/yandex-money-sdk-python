@@ -15,6 +15,8 @@ class BasePayment(object):
     def send_request(cls, url, headers=None, body=None):
         if not headers:
             headers = {}
+        headers['User-Agent'] = "Yandex.Money.SDK/Python";
+
         if not body:
             body = {}
         full_url = cls.MONEY_URL + url

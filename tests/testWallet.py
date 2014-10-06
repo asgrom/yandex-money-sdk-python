@@ -1,89 +1,69 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-
-import unittest
-from yandex_money.api import Wallet
-from yandex_money import exceptions
-from .base import ResponseMockTestCase
-import responses
-import json
 from future.moves.urllib.parse import urlencode
 
+import unittest
+import json
 
-class WalletTestSuite(ResponseMockTestCase):
+from yandex_money.api import Wallet
+from yandex_money import exceptions
+from .constants import CLIENT_ID, ACCESS_TOKEN
+
+
+class WalletTestSuite(unittest.TestCase):
     def setUp(self):
         super(WalletTestSuite, self).setUp()
-        self.api = Wallet("TEST TOKEN")
+        self.api = Wallet(ACCESS_TOKEN)
 
     def assert_auth_header_present(self):
-        self.assertEqual("Bearer TEST TOKEN",
-                      responses.calls[0].request.headers['Authorization'],
-                      )
+        pass
 
     def testAccountInfo(self):
-        self.addResponse("account-info",
-            {"status": "success"}
-        )
         response = self.api.account_info()
-        self.assertEqual(response['status'], "success")
-
         self.assert_auth_header_present()
 
     def testGetAuxToken(self):
         token = "some_aux_token"
 
-        self.addResponse("token-aux", {"aux_token": token})
-
         response = self.api.get_aux_token(["account-info", "operation-history"])
 
-        self.assertEqual(response['aux_token'], token)
-        self.assertEqual(responses.calls[0].request.body,
-                "scope=account-info+operation-history")
+        self.assertIn('aux_token', response)
 
     def testOperationHistory(self):
-        options = {"foo": "bar", "foo2": "bar2"}
-
-        self.addResponse("operation-history", [])
-
+        options = {"records": 3}
         response = self.api.operation_history(options)
-        self.assertEqual(response, [])
-        self.assertEqual(responses.calls[0].request.body,
-                urlencode(options)
-        )
+
+    def testOperationDetails(self):
+        pass
 
     def testRequestPayment(self):
-        self.addResponse("request-payment", {"status": "success"})
         options = {
-            "foo": "bar",
-            "foo2": "bar2",
-        }
+            "pattern_id": "p2p",
+            "to": "410011161616877",
+            "amount_due": "0.02",
+            "comment": "test payment comment from yandex-money-python",
+            "message": "test payment message from yandex-money-python",
+            "label": "testPayment",
+            "test_payment": True,
+            "test_result": "success"
+        };
 
         response = self.api.request_payment(options)
-        self.assertEqual(response, {"status": "success"})
-        self.assertEqual(responses.calls[0].request.body,
-                urlencode(options)
-        )
+        self.assertEqual(response['status'], 'success')
 
     def testResponsePayment(self):
-        self.addResponse("process-payment", {"status": "success"})
         options = {
-            "foo": "bar",
-            "foo2": "bar2",
+            "request_id": "test-p2p",
+            "test_payment": True,
+            "test_result": "success"
         }
 
         response = self.api.process_payment(options)
-        self.assertEqual(response, {"status": "success"})
-        self.assertEqual(responses.calls[0].request.body,
-                urlencode(options)
-        )
+        self.assertEqual(response['status'], 'success')
 
     def testIncomingTransferAccept(self):
-        self.addResponse("incoming-transfer-accept", {"status": "success"})
-        options = {
-            "foo": "bar",
-            "foo2": "bar2",
-        }
+        #self.addResponse("incoming-transfer-accept", {"status": "success"})
         operation_id = "some id"
         protection_code = "some code" # TODO: test when it's None
 
@@ -91,28 +71,15 @@ class WalletTestSuite(ResponseMockTestCase):
             operation_id=operation_id,
             protection_code=protection_code
         )
-        self.assertEqual(response, {"status": "success"})
-        self.assertEqual(
-            responses.calls[0].request.body,
-            urlencode({
-                "operation_id": operation_id,
-                "protection_code": protection_code 
-            })
-        )
+        self.assertEqual(response['status'], "refused")
 
     def testIncomingTransferReject(self):
-        self.addResponse("incoming-transfer-reject", {"status": "success"})
-        operation_id = "some id"
+        #self.addResponse("incoming-transfer-reject", {"status": "success"})
+        operation_id = "some operatoin id"
         response = self.api.incoming_transfer_reject(
             operation_id=operation_id,
         )
-        self.assertEqual(response, {"status": "success"})
-        self.assertEqual(
-            responses.calls[0].request.body,
-            urlencode({
-                "operation_id": operation_id,
-            })
-        )
+
     def testObtainTokenUrl(self):
         client_id = "client-id"
         url = Wallet.build_obtain_token_url(
@@ -123,10 +90,6 @@ class WalletTestSuite(ResponseMockTestCase):
         # TODO: check url
 
     def testGetAccessToken(self):
-        self.addResponse(Wallet.SP_MONEY_URL + "/oauth/token",
-                         {"status": "success"},
-                         is_api_url=False
-                         )
         options = {
             "code": "code",
             "client_id": "client_id",
@@ -140,33 +103,12 @@ class WalletTestSuite(ResponseMockTestCase):
             redirect_uri=options["redirect_uri"],
             client_secret=options["client_secret"]
         )
-        self.assertEqual(response, {"status": "success"})
-        self.assertEqual(
-            responses.calls[0].request.body,
-            urlencode(options)
-        )
+        self.assertEqual(response['error'], 'unauthorized_client')
 
-    def testRevokeToken(self):
-        self.addResponse("revoke", {"status": "success"})
-        Wallet.revoke_token("TEST TOKEN")
-        self.assert_auth_header_present()
+    def testRevokeTokenFormatError(self):
+        self.assertRaises(exceptions.FormatError, Wallet.revoke_token,
+                          "misspelled token")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def testRevokeTokenScopeError(self):
+        self.assertRaises(exceptions.ScopeError, Wallet.revoke_token,
+                          "someoktoken")

@@ -31,7 +31,6 @@ setup(
     ],
     test_suite = 'nose.collector',
     tests_require = [
-        "responses",
         "nose"
     ],
     classifiers = [
