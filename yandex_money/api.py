@@ -29,9 +29,9 @@ class BasePayment(object):
         if result.status_code == 400:
             raise exceptions.FormatError
         elif result.status_code == 401:
-            raise exceptions.ScopeError
-        elif result.status_code == 403:
             raise exceptions.TokenError
+        elif result.status_code == 403:
+            raise exceptions.ScopeError
         return result.json()
 
 class Wallet(BasePayment):

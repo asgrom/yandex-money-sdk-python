@@ -105,10 +105,3 @@ class WalletTestSuite(unittest.TestCase):
         )
         self.assertEqual(response['error'], 'unauthorized_client')
 
-    def testRevokeTokenFormatError(self):
-        self.assertRaises(exceptions.FormatError, Wallet.revoke_token,
-                          "misspelled token")
-
-    def testRevokeTokenScopeError(self):
-        self.assertRaises(exceptions.ScopeError, Wallet.revoke_token,
-                          "someoktoken")
