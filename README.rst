@@ -22,8 +22,8 @@ Installation
 ~~~~~~~~~~~~
 
 1. Install it with ``pip install yandex-money-sdk``
-2. Paste ``from yandex_money.api import WalletPayment, ExternalPayment``
-   to your source code
+2. Paste ``from yandex_money.api import Wallet, ExternalPayment`` to
+   your source code
 
 Payments from the Yandex.Money wallet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,8 +39,8 @@ Using Yandex.Money API requires following steps
    .. code:: python
 
        scope = ['account-info', 'operation-history'] # etc..
-       auth_url = WalletPayment.buildObtainTokenUrl(client_id,
-           redirect_uri, scope, client_secret)
+       auth_url = Wallet.buildObtainTokenUrl(client_id,
+           redirect_uri, scope)
 
 2. After that, user fills Yandex.Money HTML form and user is redirected
    back to ``REDIRECT_URI?code=CODE``.
@@ -49,7 +49,7 @@ Using Yandex.Money API requires following steps
 
    .. code:: python
 
-       access_token = WalletPayment.get_access_token(client_id, code, redirect_uri,
+       access_token = Wallet.get_access_token(client_id, code, redirect_uri,
            client_secret=None)
 
 4. Now you can use Yandex.Money API.
