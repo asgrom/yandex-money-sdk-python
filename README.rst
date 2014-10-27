@@ -39,7 +39,7 @@ Using Yandex.Money API requires following steps
    .. code:: python
 
        scope = ['account-info', 'operation-history'] # etc..
-       auth_url = Wallet.buildObtainTokenUrl(client_id,
+       auth_url = Wallet.build_obtain_token_url(client_id,
            redirect_uri, scope)
 
 2. After that, user fills Yandex.Money HTML form and user is redirected
