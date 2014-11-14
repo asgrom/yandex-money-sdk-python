@@ -2,24 +2,28 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
 
-from future.moves.urllib.parse import urlparse, urlencode
+from future.moves.urllib.parse import urlencode
 import requests
 
 from . import exceptions
 
-class BasePayment(object):
-    MONEY_URL = "https://money.yandex.ru"
-    SP_MONEY_URL = "https://sp-money.yandex.ru"
+# change it to debug/demo hosts
+config = {
+    'MONEY_URL': "https://money.yandex.ru",
+    'SP_MONEY_URL': "https://sp-money.yandex.ru"
+}
 
+
+class BasePayment(object):
     @classmethod
     def send_request(cls, url, headers=None, body=None):
         if not headers:
             headers = {}
-        headers['User-Agent'] = "Yandex.Money.SDK/Python";
+        headers['User-Agent'] = "Yandex.Money.SDK/Python"
 
         if not body:
             body = {}
-        full_url = cls.MONEY_URL + url
+        full_url = config['MONEY_URL'] + url
         return cls.process_result(
             requests.post(full_url, headers=headers, data=body)
         )
@@ -34,13 +38,14 @@ class BasePayment(object):
             raise exceptions.ScopeError
         return result.json()
 
+
 class Wallet(BasePayment):
     def __init__(self, access_token):
         self.access_token = access_token
 
     def _send_authenticated_request(self, url, options=None):
         return self.send_request(url, {
-            "Authorization": "Bearer {}".format(self.access_token) 
+            "Authorization": "Bearer {}".format(self.access_token)
             }, options)
 
     def account_info(self):
@@ -53,15 +58,15 @@ class Wallet(BasePayment):
 
     def operation_history(self, options):
         return self._send_authenticated_request("/api/operation-history",
-            options)
+                                                options)
 
     def request_payment(self, options):
         return self._send_authenticated_request("/api/request-payment",
-            options)
+                                                options)
 
     def process_payment(self, options):
         return self._send_authenticated_request("/api/process-payment",
-            options)
+                                                options)
 
     def incoming_transfer_accept(self, operation_id, protection_code=None):
         return self._send_authenticated_request(
@@ -71,24 +76,25 @@ class Wallet(BasePayment):
             })
 
     def incoming_transfer_reject(self, operation_id):
-        return self._send_authenticated_request("/api/incoming-transfer-reject",
+        return self._send_authenticated_request(
+            "/api/incoming-transfer-reject",
             {
                 "operation_id": operation_id
-        })
+            })
 
     @classmethod
     def build_obtain_token_url(self, client_id, redirect_uri, scope):
-        return "{}/oauth/authorize?{}".format(self.SP_MONEY_URL,
-                urlencode({
-                    "client_id": client_id,
-                    "redirect_uri": redirect_uri,
-                    "scope": " ".join(scope)
-    }))
+        return "{}/oauth/authorize?{}".format(config['SP_MONEY_URL'],
+                                              urlencode({
+                                                  "client_id": client_id,
+                                                  "redirect_uri": redirect_uri,
+                                                  "scope": " ".join(scope)
+                                              }))
 
     @classmethod
     def get_access_token(self, client_id, code, redirect_uri,
-            client_secret=None):
-        full_url = self.SP_MONEY_URL + "/oauth/token"
+                         client_secret=None):
+        full_url = config['SP_MONEY_URL'] + "/oauth/token"
         return self.process_result(requests.post(full_url, data={
             "code": code,
             "client_id": client_id,
@@ -122,5 +128,3 @@ class ExternalPayment(BasePayment):
     def process(self, options):
         options['instance_id'] = self.instance_id
         return self.send_request("/api/process-external-payment", body=options)
-
-
