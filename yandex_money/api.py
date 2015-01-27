@@ -47,6 +47,22 @@ class Wallet(BasePayment):
             }, options)
 
     def account_info(self):
+        """
+            Returns information about a user's wallet
+            http://api.yandex.com/money/doc/dg/concepts/About.xml
+            https://tech.yandex.ru/money/doc/dg/reference/account-info-docpage/
+
+            Returns:
+                A dictionary containing account information.
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
         return self._send_authenticated_request("/api/account-info")
 
     def get_aux_token(self, scope):
@@ -55,18 +71,127 @@ class Wallet(BasePayment):
         })
 
     def operation_history(self, options):
+        """
+            Returns operation history of a user's wallet
+            http://api.yandex.com/money/doc/dg/reference/operation-history.xml
+            https://tech.yandex.ru/money/doc/dg/reference/operation-history-docpage/
+
+            Args:
+                options: A dictionary with filter parameters according to
+                documetation
+
+            Returns:
+                A dictionary containing user's wallet operations.
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
         return self._send_authenticated_request("/api/operation-history",
                                                 options)
 
+    def operation_details(self, operation_id):
+        """
+            Returns details of operation specified by operation_id
+            http://api.yandex.com/money/doc/dg/reference/operation-details.xml
+            https://tech.yandex.ru/money/doc/dg/reference/operation-details-docpage/
+
+            Args:
+                operation_id: A operation identifier
+
+            Returns:
+                A dictionary containing all details of requested operation.
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
+        return self._send_authenticated_request("/api/operation-details",
+                                                {"operation_id": operation_id})
+
     def request_payment(self, options):
+        """
+            Requests a payment.
+            http://api.yandex.com/money/doc/dg/reference/request-payment.xml
+            https://tech.yandex.ru/money/doc/dg/reference/request-payment-docpage/
+
+            Args:
+                options: A dictionary of method's parameters. Check out docs
+                for more information.
+
+            Returns:
+                A dictionary containing `payment_id` and additional information
+                about a recipient and payer
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
         return self._send_authenticated_request("/api/request-payment",
                                                 options)
 
     def process_payment(self, options):
+        """
+            Confirms a payment that was created using the request-payment
+            method.
+            http://api.yandex.com/money/doc/dg/reference/process-payment.xml
+            https://tech.yandex.ru/money/doc/dg/reference/process-payment-docpage/
+
+            Args:
+                options: A dictionary of method's parameters. Check out docs
+                for more information.
+
+            Returns:
+                A dictionary containing status of payment and additional steps
+                for authorization(if needed)
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
         return self._send_authenticated_request("/api/process-payment",
                                                 options)
 
     def incoming_transfer_accept(self, operation_id, protection_code=None):
+        """
+            Accepts incoming transfer with a protection code or deferred
+            transfer
+            http://api.yandex.com/money/doc/dg/reference/incoming-transfer-accept.xml
+            https://tech.yandex.ru/money/doc/dg/reference/incoming-transfer-accept-docpage/
+
+            Args:
+                operation_id: A operation identifier
+                protection_code: secret code of four decimal digits. Specified
+                for an incoming transfer proteced by a secret code. Omitted for
+                deferred transfers
+
+            Returns:
+                A dictionary containing information about operation result
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
         return self._send_authenticated_request(
             "/api/incoming-transfer-accept", {
                 "operation_id": operation_id,
@@ -74,6 +199,29 @@ class Wallet(BasePayment):
             })
 
     def incoming_transfer_reject(self, operation_id):
+        """
+            Rejects incoming transfer with a protection code or deferred
+            transfer
+            http://api.yandex.com/money/doc/dg/reference/incoming-transfer-reject.xml
+            https://tech.yandex.ru/money/doc/dg/reference/incoming-transfer-reject-docpage/
+
+            Args:
+                operation_id: A operation identifier
+                protection_code: A secret code of four decimal digits.
+                Specified for an incoming transfer proteced by a secret code.
+                Omitted for deferred transfers
+
+            Returns:
+                A dictionary containing information about operation result
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
         return self._send_authenticated_request(
             "/api/incoming-transfer-reject",
             {
@@ -103,8 +251,27 @@ class Wallet(BasePayment):
         ))
 
     @classmethod
-    def revoke_token(self, token, revoke_all=False):
-        return self.send_request("/api/revoke", body={
+    def revoke_token(self, token=None, revoke_all=False):
+        """
+            Revokes access token.
+            http://api.yandex.com/money/doc/dg/reference/revoke-access-token.xml
+            https://tech.yandex.ru/money/doc/dg/reference/revoke-access-token-docpage/
+
+            Args:
+                token: A token to be revoked
+
+            Returns:
+                None
+
+            Raises:
+                exceptions.FormatError: Authorization header is missing or has
+                    an invalid value
+                exceptions.TokenEror: Nonexistent, expired, or revoked token
+                    specified
+                exceptions.ScopeError: The token does not have permissions for
+                    the requested operation
+        """
+        self.send_request("/api/revoke", body={
             "revoke-all": revoke_all
         }, headers={"Authorization": "Bearer {}".format(token)})
 
@@ -115,14 +282,52 @@ class ExternalPayment(BasePayment):
 
     @classmethod
     def get_instance_id(cls, client_id):
+        """
+            Registers instance of application
+            http://api.yandex.com/money/doc/dg/reference/instance-id.xml
+            https://tech.yandex.ru/money/doc/dg/reference/instance-id-docpage/
+
+            Args:
+                client_id: A identifier of application
+
+            Returns:
+                A dictionary with status of operation
+        """
         return cls.send_request("/api/instance-id", body={
             "client_id": client_id
         })
 
     def request(self, options):
+        """
+            Requests a external payment
+            http://api.yandex.com/money/doc/dg/reference/request-external-payment.xml
+            https://tech.yandex.ru/money/doc/dg/reference/request-external-payment-docpage/
+
+            Args:
+                options: A dictionary of method's parameters. Check out docs
+                for more information.
+
+            Returns:
+                A dictionary containing `payment_id` and additional information
+                about a recipient and payer
+        """
         options['instance_id'] = self.instance_id
         return self.send_request("/api/request-external-payment", body=options)
 
     def process(self, options):
+        """
+            Confirms a payment that was created using the
+            request-extenral-payment method
+            http://api.yandex.com/money/doc/dg/reference/process-external-payment.xml
+            https://tech.yandex.ru/money/doc/dg/reference/process-external-payment-docpage/
+
+            Args:
+                options: A dictionary of method's parameters. Check out docs
+                for more information.
+
+            Returns:
+                A dictionary containing status of payment and additional steps
+                for authorization(if needed)
+        """
         options['instance_id'] = self.instance_id
         return self.send_request("/api/process-external-payment", body=options)

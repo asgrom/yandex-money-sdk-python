@@ -1,13 +1,9 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from future.builtins import *
-from future.moves.urllib.parse import urlencode
-
 import unittest
-import json
 
 from yandex_money.api import Wallet
-from yandex_money import exceptions
 from .constants import CLIENT_ID, ACCESS_TOKEN
 
 
@@ -20,22 +16,21 @@ class WalletTestSuite(unittest.TestCase):
         pass
 
     def testAccountInfo(self):
-        response = self.api.account_info()
+        self.api.account_info()
         self.assert_auth_header_present()
 
     def testGetAuxToken(self):
-        token = "some_aux_token"
-
-        response = self.api.get_aux_token(["account-info", "operation-history"])
+        response = self.api.get_aux_token(["account-info",
+                                           "operation-history"])
 
         self.assertIn('aux_token', response)
 
     def testOperationHistory(self):
         options = {"records": 3}
-        response = self.api.operation_history(options)
+        self.api.operation_history(options)
 
     def testOperationDetails(self):
-        pass
+        self.api.operation_details("some-invalid-id")
 
     def testRequestPayment(self):
         options = {
@@ -47,7 +42,7 @@ class WalletTestSuite(unittest.TestCase):
             "label": "testPayment",
             "test_payment": True,
             "test_result": "success"
-        };
+        }
 
         response = self.api.request_payment(options)
         self.assertEqual(response['status'], 'success')
@@ -63,9 +58,8 @@ class WalletTestSuite(unittest.TestCase):
         self.assertEqual(response['status'], 'success')
 
     def testIncomingTransferAccept(self):
-        #self.addResponse("incoming-transfer-accept", {"status": "success"})
         operation_id = "some id"
-        protection_code = "some code" # TODO: test when it's None
+        protection_code = "some code"  # TODO: test when it's None
 
         response = self.api.incoming_transfer_accept(
             operation_id=operation_id,
@@ -74,15 +68,13 @@ class WalletTestSuite(unittest.TestCase):
         self.assertEqual(response['status'], "refused")
 
     def testIncomingTransferReject(self):
-        #self.addResponse("incoming-transfer-reject", {"status": "success"})
         operation_id = "some operatoin id"
-        response = self.api.incoming_transfer_reject(
+        self.api.incoming_transfer_reject(
             operation_id=operation_id,
         )
 
     def testObtainTokenUrl(self):
-        client_id = "client-id"
-        url = Wallet.build_obtain_token_url(
+        Wallet.build_obtain_token_url(
             "client-id",
             "http://localhost/redirect",
             ["account-info", "operation_history"]
@@ -95,8 +87,8 @@ class WalletTestSuite(unittest.TestCase):
             "client_id": "client_id",
             "grant_type": "authorization_code",
             "redirect_uri": "redirect_uri",
-            "client_secret": "client_secret" 
-            }
+            "client_secret": "client_secret"
+        }
         response = Wallet.get_access_token(
             code=options["code"],
             client_id=options["client_id"],
@@ -104,4 +96,3 @@ class WalletTestSuite(unittest.TestCase):
             client_secret=options["client_secret"]
         )
         self.assertEqual(response['error'], 'unauthorized_client')
-
