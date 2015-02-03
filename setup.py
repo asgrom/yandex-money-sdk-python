@@ -14,7 +14,7 @@ if sys.argv[-1] == 'publish':
 
 setup(
     name='yandex-money-sdk',
-    version='0.1.2',
+    version='0.1.3',
     description='SDK yandex money API',
     license='MIT',
     author="NBCO Yandex.Money LLC",

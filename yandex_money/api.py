@@ -49,7 +49,7 @@ class Wallet(BasePayment):
     def account_info(self):
         """
             Returns information about a user's wallet
-            http://api.yandex.com/money/doc/dg/concepts/About.xml
+            http://api.yandex.com/money/doc/dg/reference/account-info.xml
             https://tech.yandex.ru/money/doc/dg/reference/account-info-docpage/
 
             Returns:
@@ -207,9 +207,6 @@ class Wallet(BasePayment):
 
             Args:
                 operation_id: A operation identifier
-                protection_code: A secret code of four decimal digits.
-                Specified for an incoming transfer proteced by a secret code.
-                Omitted for deferred transfers
 
             Returns:
                 A dictionary containing information about operation result
@@ -283,15 +280,15 @@ class ExternalPayment(BasePayment):
     @classmethod
     def get_instance_id(cls, client_id):
         """
-            Registers instance of application
+            Registers an instance of the application
             http://api.yandex.com/money/doc/dg/reference/instance-id.xml
             https://tech.yandex.ru/money/doc/dg/reference/instance-id-docpage/
 
             Args:
-                client_id: A identifier of application
+                client_id: A identifier of an application
 
             Returns:
-                A dictionary with status of operation
+                A dictionary with status of an operation
         """
         return cls.send_request("/api/instance-id", body={
             "client_id": client_id
@@ -299,7 +296,7 @@ class ExternalPayment(BasePayment):
 
     def request(self, options):
         """
-            Requests a external payment
+            Requests an external payment
             http://api.yandex.com/money/doc/dg/reference/request-external-payment.xml
             https://tech.yandex.ru/money/doc/dg/reference/request-external-payment-docpage/
 
