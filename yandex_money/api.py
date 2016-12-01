@@ -231,7 +231,8 @@ class Wallet(BasePayment):
                                               urlencode({
                                                   "client_id": client_id,
                                                   "redirect_uri": redirect_uri,
-                                                  "scope": " ".join(scope)
+                                                  "scope": " ".join(scope),
+                                                  "response_type": "code"
                                               }))
 
     @classmethod
